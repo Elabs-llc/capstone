@@ -1,0 +1,66 @@
+
+Place Name	Latitude	Longitude
+Accra, Ghana	5.614818	-0.205874
+Obuasi, Ashanti-Kwahu, Ghana	6.201207	-1.691251
+Wa, Upper West Region, Ghana	10.060074	-2.509891
+Agona Swedru, Ghana	5.533765	-0.701280
+Tamale, Ghana	9.432919	-0.848452
+Mampong, Ghana	7.062351	-1.404598
+Winneba, Ghana	5.362229	-0.629892
+Ayawaso, Accra, Ghana	5.614223	-0.196336
+Ho, Ghana	6.611944	0.470278
+Tema, Ghana	5.666667	0.000000
+Takoradi, Ghana	4.904203	-1.759872
+Koforidua, Ghana	6.083333	-0.250000
+Kpeshie, Accra, Ghana	5.593222	-0.140138
+Kumasi, Ghana	6.700071	-1.630783
+
+ {
+   "coord": {
+      "lon": 7.367,
+      "lat": 45.133
+   },
+   "weather": [
+      {
+         "id": 501,
+         "main": "Rain",
+         "description": "moderate rain",
+         "icon": "10d"
+      }
+   ],
+   "base": "stations",
+   "main": {
+      "temp": 284.2,
+      "feels_like": 282.93,
+      "temp_min": 283.06,
+      "temp_max": 286.82,
+      "pressure": 1021,
+      "humidity": 60,
+      "sea_level": 1021,
+      "grnd_level": 910
+   },
+   "visibility": 10000,
+   "wind": {
+      "speed": 4.09,
+      "deg": 121,
+      "gust": 3.47
+   },
+   "rain": {
+      "1h": 2.73
+   },
+   "clouds": {
+      "all": 83
+   },
+   "dt": 1726660758,
+   "sys": {
+      "type": 1,
+      "id": 6736,
+      "country": "IT",
+      "sunrise": 1726636384,
+      "sunset": 1726680975
+   },
+   "timezone": 7200,
+   "id": 3165523,
+   "name": "Province of Turin",
+   "cod": 200
+}

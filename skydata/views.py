@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 import requests
 
 from skydata.models import SkynexusData
@@ -27,8 +27,9 @@ def sky_view(request, lat,lon):
             return render(request, 'index.html', {'weather_info': weather_info})
         else:
             return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
-    except:
-        raise Http404("Error : Unable to retrieve weather data")
+    except ValueError as json_error:
+        print(f"JSON decoding error occurred: {json_error}")
+        raise Http404("Data Error: Unable to parse weather data")
 
 
 # Save  Weather Information
@@ -52,4 +53,10 @@ def save_skydata(request):
         return render(request, 'index.html', {'error': 'Unable to save weather data'})
     
 
+# Fetch Weather Information from the database
+def fetch_skydata(request):
+    """ Fetch Weather Information from the database"""
+    #weather_data = get_object_or_404(SkynexusData, pk=1)
+    weather_data = SkynexusData.objects.all().order_by('-created_at')
+    return render(request, 'weather-data.html', {'weather_data': weather_data})
    

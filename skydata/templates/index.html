@@ -20,9 +20,10 @@
     {% else %}
         <p>{{ error }}</p>
     {% endif %}
+    
 
     <!-- Save  Weather Information -->
-    <form id="weatherForm" method="post" action="{% url 'skydata:save_skydata'%}">
+    <form id="weatherForm" method="post" action="{% url 'skydata:save-skydata'%}">
         {% csrf_token %}
         <input type="hidden" name="city" value="{{ weather_info.city }}">
         <input type="hidden" name="country" value="{{ weather_info.country }}">
@@ -34,6 +35,11 @@
         <button type="submit">Save Weather Record</button>
     </form>
     
+    {% if message %}
+        <p>{{ message }}</p>
+        <a href="{% url 'skydata:fetch-skydata' %}">View Saved Weather Records</a>
+    
+    {% endif %}
     
 
 </body>

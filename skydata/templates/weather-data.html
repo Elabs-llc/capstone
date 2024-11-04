@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Information</title>
+</head>
+<body>
+    <h1>Weather  Information In Ghana</h1>
+
+    {% for data in weather_data %}
+    <h2>{{ data.city }}, {{ data.country }}</h2>
+    <p>Temperature: {{ data.temperature }}°C</p>
+    <p>Feels Like: {{ data.feels_like }}°C</p>
+    <p>Description: {{ data.weather_description }}</p>
+    <p>Wind Speed: {{ data.wind_speed }} m/s</p>
+    <p>Humidity: {{ data.humidity }}%</p>
+    <p>Recorded at: {{ data.created_at }}</p>
+    <hr>
+{% empty %}
+    <p>No weather data available.</p>
+{% endfor %}
+
+</body>
+</html>

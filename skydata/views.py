@@ -30,6 +30,22 @@ def sky_view(request, lat,lon):
 
 
 # Save  Weather Information
-# def save_skydata():
-#     """ Save  Weather Information"""
+def save_skydata(request):
+    """ Save  Weather Information"""
+    if request.method == 'POST':
+        city = request.POST.get('city')
+        country = request.POST.get('country')
+        temperature = request.POST.get('temperature')
+        feels_like = request.POST.get('feels_like')
+        weather_description = request.POST.get('weather_description')
+        icon = request.POST.get('icon')
+        wind_speed = request.POST.get('wind_speed')
+        humidity = request.POST.get('humidity')
+        # Add your database logic here to save the weather data
+        
+        return render(request, 'index.html', {'message': 'Weather data saved successfully'})
+    else:
+        return render(request, 'index.html', {'error': 'Unable to save weather data'})
+    
+
    

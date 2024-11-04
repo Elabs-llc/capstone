@@ -22,7 +22,7 @@
     {% endif %}
 
     <!-- Save  Weather Information -->
-    <form id="weatherForm" method="post" action="{% url 'skydata' lat=weather_info.lat lon=weather_info.lon %}">
+    <form id="weatherForm" method="post" action="{% url 'skydata:save_skydata'%}">
         {% csrf_token %}
         <input type="hidden" name="city" value="{{ weather_info.city }}">
         <input type="hidden" name="country" value="{{ weather_info.country }}">

@@ -2,6 +2,8 @@ from django.http import Http404
 from django.shortcuts import render
 import requests
 
+from skydata.models import SkynexusData
+
 
 
 def sky_view(request, lat,lon):
@@ -33,16 +35,18 @@ def sky_view(request, lat,lon):
 def save_skydata(request):
     """ Save  Weather Information"""
     if request.method == 'POST':
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-        temperature = request.POST.get('temperature')
-        feels_like = request.POST.get('feels_like')
-        weather_description = request.POST.get('weather_description')
-        icon = request.POST.get('icon')
-        wind_speed = request.POST.get('wind_speed')
-        humidity = request.POST.get('humidity')
-        # Add your database logic here to save the weather data
-        
+        weather_data = {
+            'city': request.POST.get('city', 'NA'),
+            'country': request.POST.get('country', 'Unknown'),
+            'temperature': request.POST.get('temperature', 0.0),
+            'feels_like': request.POST.get('feels_like', 0.0),
+            'weather_description': request.POST.get('weather_description', 'NA'),
+            'wind_speed': request.POST.get('wind_speed', 0.0),
+            'humidity': request.POST.get('humidity', 0),
+        }
+        # Database logic  to save the weather data
+        SkynexusData.objects.create(**weather_data)
+
         return render(request, 'index.html', {'message': 'Weather data saved successfully'})
     else:
         return render(request, 'index.html', {'error': 'Unable to save weather data'})

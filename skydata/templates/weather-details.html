@@ -1,0 +1,29 @@
+<!-- weather-detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Details</h1>
+
+        <div class="weather-item">
+            <h2>{{ weather_data.city }}, {{ weather_data.country }}</h2>
+            <p><strong>Temperature:</strong> {{ weather_data.temperature }}°C</p>
+            <p><strong>Feels Like:</strong> {{ weather_data.feels_like }}°C</p>
+            <p><strong>Description:</strong> {{ weather_data.weather_description }}</p>
+            <p><strong>Wind Speed:</strong> {{ weather_data.wind_speed }} m/s</p>
+            <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
+            <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
+
+            <a href="{% url 'skydata:fetch-skydata' %}">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

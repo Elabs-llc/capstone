@@ -1,35 +1,42 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 import requests
 
 from skydata.models import SkynexusData
+from skydata.weather_service import fetch_weather_data, get_lat_lon
 
+def home(request):
+    if request.method == 'POST':
+        city_name = request.POST.get('city')
+        if city_name:
+            data = get_lat_lon(city_name)
+            if data:  # Check if data is not None
+
+                # Unpack latitude and longitude from the returned tuple
+                lat, lon = data  
+
+                # Redirect to sky_view to process data
+                return redirect('skydata:sky-view', lat=lat, lon=lon)
+            
+            else:
+                return render(request, 'home.html', {'error': 'Latitude and longitude not found'})
+                    
+        else:
+            return render(request, 'home.html', {'error': 'City not found'})
+    
+    
+    return render(request, 'home.html')
 
 
 def sky_view(request, lat,lon):
     # openweathermap api key
-    api_key = "7e2a82a043dd7fa93fe729456e6dbe56"
-    try:
-        response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}")
-
-        if response.status_code == 200:
-            data = response.json()
-            weather_info = {
-                "city": data['name'],
-                "country": data['sys']['country'],
-                "temperature": data['main']['temp'],
-                "feels_like": data['main']['feels_like'],
-                "weather_description": data['weather'][0]['description'],
-                "icon": data['weather'][0]['icon'],
-                "wind_speed": data['wind']['speed'],
-                "humidity": data['main']['humidity'],
-            }
-            return render(request, 'index.html', {'weather_info': weather_info})
-        else:
-            return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
-    except ValueError as json_error:
-        print(f"JSON decoding error occurred: {json_error}")
-        raise Http404("Data Error: Unable to parse weather data")
+    if lat and lon:
+        # Fetch weather data
+        weather_info = fetch_weather_data(lat, lon)
+            
+        return render(request, 'index.html', {'weather_info': weather_info})
+    else:
+        return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
 
 
 # Save  Weather Information
@@ -50,7 +57,7 @@ def save_skydata(request):
 
         return render(request, 'index.html', {'message': 'Weather data saved successfully'})
     else:
-        return render(request, 'index.html', {'error': 'Unable to save weather data'})
+        return render(request, 'index.html', {'error': 'No latitiude and longitude provided'})
     
 
 # Fetch Weather Information from the database
@@ -60,3 +67,9 @@ def fetch_skydata(request):
     weather_data = SkynexusData.objects.all().order_by('-created_at')
     return render(request, 'weather-data.html', {'weather_data': weather_data})
    
+
+# Details of Weather Information
+def weather_details(request, skydata_id):
+    """ Details of Weather Information"""
+    weather_data = get_object_or_404(SkynexusData, pk=skydata_id)
+    return render(request, 'weather-details.html', {'weather_data': weather_data})

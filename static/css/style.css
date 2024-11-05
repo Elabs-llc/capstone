@@ -1,0 +1,112 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header Styling */
+h1 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Container Styling */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Weather Data List Styling */
+.weather-item {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+}
+
+.weather-item h2 {
+    color: #007bff;
+    font-size: 1.5rem;
+}
+
+.weather-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
+/* Details Link Button */
+.weather-item a {
+    display: inline-block;
+    color: #fff;
+    background-color: #007bff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.weather-item a:hover {
+    background-color: #0056b3;
+}
+
+/* Specific Weather Details Styling */
+.weather-details h2 {
+    color: #333;
+    font-size: 2rem;
+    margin-top: 0;
+}
+
+.weather-details p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+/* Icon Styling */
+.weather-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+/* Search Form Styling */
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 300px;
+    margin-right: 10px;
+}
+
+.search-form button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Error Message Styling */
+.error-message {
+    text-align: center;
+    color: red;
+    margin-top: 10px;
+}
+

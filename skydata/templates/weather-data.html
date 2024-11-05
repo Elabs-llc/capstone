@@ -4,22 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Information</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
 </head>
 <body>
-    <h1>Weather  Information In Ghana</h1>
+    <div class="container">
+        <h1>Weather  Information For Various Cities In Ghana</h1>
 
-    {% for data in weather_data %}
-    <h2>{{ data.city }}, {{ data.country }}</h2>
-    <p>Temperature: {{ data.temperature }}°C</p>
-    <p>Feels Like: {{ data.feels_like }}°C</p>
-    <p>Description: {{ data.weather_description }}</p>
-    <p>Wind Speed: {{ data.wind_speed }} m/s</p>
-    <p>Humidity: {{ data.humidity }}%</p>
-    <p>Recorded at: {{ data.created_at }}</p>
-    <hr>
-{% empty %}
-    <p>No weather data available.</p>
-{% endfor %}
+        {% for data in weather_data %}
+            <div class="weather-item">
+                <h2>{{ data.city }}, {{ data.country }}</h2>
+                <p>Temperature: {{ data.temperature }}°C</p>
+                <p>Feels Like: {{ data.feels_like }}°C</p>
+                <p>Description: {{ data.weather_description }}</p>
+                <a href="{% url 'skydata:weather-details' data.id %}">Read more</a>
+            </div>
+        {% empty %}
+            <p>No weather data available.</p>
+        {% endfor %}
+    </div>
 
 </body>
 </html>

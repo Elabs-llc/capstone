@@ -22,7 +22,8 @@
             <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
             <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
 
-            <a href="{% url 'skydata:fetch-skydata' %}">Back to Home</a>
+            <a href="{% url 'skydata:fetch-skydata' %}">Weather Records</a>
+            <a href="{% url 'skydata:home' %}">Back to Home</a>
         </div>
     </div>
 </body>

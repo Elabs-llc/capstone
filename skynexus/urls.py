@@ -18,7 +18,10 @@ from django.contrib import admin
 from django.urls import path,include
 from debug_toolbar.toolbar import debug_toolbar_urls
 
+from skydata import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("skydata/", include("skydata.urls")),
+    path('', views.home, name='home'), # this was added because of github codespaces https://solid-pancake-pjrg75xj96jj3rggj-8000.app.github.dev/
 ]+ debug_toolbar_urls()

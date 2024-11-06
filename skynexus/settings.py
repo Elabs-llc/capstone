@@ -28,7 +28,13 @@ SECRET_KEY = 'django-insecure-#0=%2596kx@*hn=%mrn3w2zmn5n9f$d6(f=bjw6jx85ku^ltuu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# When running Django in GitHub Codespaces, you are using a remote development environment that 
+# is accessible via a URL like https://solid-pancake-pjrg75xj96jj3rggj-8000.app.github.dev/ 
+# instead of the standard localhost.
+# GitHub Codespaces runs applications inside a containerized environment, and it 
+# exposes ports to the public GitHub domain. This can sometimes cause issues with 
+# how URLs are routed or accessed in the application.
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','solid-pancake-pjrg75xj96jj3rggj-8000.app.github.dev']
 
 # Application definition
 

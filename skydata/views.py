@@ -1,47 +1,145 @@
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+
+from skydata.weather_service import fetch_weather_data, get_lat_lon
+from .models import SkynexusData
+from .serializers import SkynexusDataSerializer
+from rest_framework.decorators import action
+
+# ViewSets combine the logic for a set of related views
+# ModelViewSet provides CRUD operations automatically:
+# LIST (GET /api/weather/)
+# CREATE (POST /api/weather/)
+# RETRIEVE (GET /api/weather/{id}/)
+# UPDATE (PUT /api/weather/{id}/)
+# DELETE (DELETE /api/weather/{id}/)
+# queryset defines which records are available through the API
+# serializer_class specifies which serializer to use
+class SkynexusDataViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows weather data to be viewed or edited.
+    """
+    queryset = SkynexusData.objects.all().order_by('-created_at')
+    serializer_class = SkynexusDataSerializer
+
+    # Action to save weather data via  POST request
+    @action(detail=False,methods=['post'], url_path='save-weather')
+    def save_weather(self,  request):
+        """Handles custom POST requests to save weather data."""
+        serializer = self.get_serializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Weather data saved successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    # Action to retrieve weather data from the database via GET request
+    @action(detail=False, methods=['get'], url_path='fetch-weather')
+    def fetch_weather(self,  request):
+        """Fetch all weather records, ordered by latest created."""
+        weather_data = SkynexusData.objects.all().order_by('-created_at')
+        serializer = self.get_serializer(weather_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    # Action to get weather details for a specific entry
+    @action(detail=True, methods=['get'], url_path='weather-details')
+    def weather_details(self, request, pk=None):
+        """Fetch weather details for a specific entry."""
+        try:
+            weather_data = SkynexusData.objects.get(id=pk)
+            serializer = self.get_serializer(weather_data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except SkynexusData.DoesNotExist:
+            return Response({"error": "Weather data not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+    # Action to fetches real-time weather data for a given city
+    @action(detail=False, methods=['get'], url_path='search')
+    def fetch_current_weather(self, request, city):
+        """Fetches real-time weather data for a given city."""
+        try:
+            coordinates = get_lat_lon(city)
+            if coordinates:
+                weather_data = fetch_weather_data(coordinates)
+                return  Response(weather_data, status=status.HTTP_200_OK)
+            
+            #  If city is not found, return a 404 error
+            return  Response({"error": "City not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            #  If any error occurs during fetching weather data, return a 500 error
+            return  Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# views.py
+from django.conf import settings
+from django.shortcuts import redirect, render
 import requests
 
-from skydata.models import SkynexusData
-from skydata.weather_service import fetch_weather_data, get_lat_lon
+API_BASE_URL = settings.API_BASE_URL
+
+def fetch_skydata(request):
+    """ Fetch weather data from the API and render it in the template. """
+    try:
+        response = requests.get(f"{API_BASE_URL}skynexusdata/")
+        response.raise_for_status()  # Check for HTTP errors
+        weather_data = response.json()  # Parse the JSON data from API response
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
+        weather_data = []  # Fallback if there's an error
+
+    return render(request, 'weather-data.html', {'weather_data': weather_data})
+
+def weather_details(request, skydata_id):
+    """ Fetch details of a specific weather entry and render in the template. """
+    try:
+        response = requests.get(f"{API_BASE_URL}skynexusdata/{skydata_id}/")
+        response.raise_for_status()
+        weather = response.json()
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
+        weather = {}
+
+    return render(request, 'weather-details.html', {'weather': weather})
+
 
 def home(request):
     if request.method == 'POST':
         city_name = request.POST.get('city')
         if city_name:
-            data = get_lat_lon(city_name)
-            if data:  # Check if data is not None
+            # Make an API call to fetch weather data for the city
+            response = requests.get(f"{settings.API_BASE_URL}/search/?city={city_name}")
 
-                # Unpack latitude and longitude from the returned tuple
-                lat, lon = data  
+            if response.status_code == status.HTTP_200_OK:
+                # Extract weather data from the response
+                weather_info = response.json()
 
-                # Redirect to sky_view to process data
-                return redirect('skydata:sky-view', lat=lat, lon=lon)
-            
+                # Check if weather data exists
+                if weather_info:
+                    # Redirect to sky-view and pass the entire weather data
+                    return redirect('skydata:sky-view', weather_info=weather_info)
+                else:
+                    return render(request, 'home.html', {'error': 'Weather data not found.'})
+
+            elif response.status_code == status.HTTP_404_NOT_FOUND:
+                return render(request, 'home.html', {'error': 'City not found'})
             else:
-                return render(request, 'home.html', {'error': 'Latitude and longitude not found'})
-                    
-        else:
-            return render(request, 'home.html', {'error': 'City not found'})
-    
+                return render(request, 'home.html', {'error': 'Error fetching weather data'})
     
     return render(request, 'home.html')
 
-
-def sky_view(request, lat,lon):
-    # openweathermap api key
-    if lat and lon:
-        # Fetch weather data
-        weather_info = fetch_weather_data(lat, lon)
+def sky_view(request, weather_info):
+    if weather_info:
             
         return render(request, 'index.html', {'weather_info': weather_info})
     else:
         return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
 
 
-# Save  Weather Information
 def save_skydata(request):
-    """ Save  Weather Information"""
+    """Save Weather Information by calling the save_weather API"""
     if request.method == 'POST':
         weather_data = {
             'city': request.POST.get('city', 'NA'),
@@ -52,24 +150,16 @@ def save_skydata(request):
             'wind_speed': request.POST.get('wind_speed', 0.0),
             'humidity': request.POST.get('humidity', 0),
         }
-        # Database logic  to save the weather data
-        SkynexusData.objects.create(**weather_data)
-
-        return render(request, 'index.html', {'message': 'Weather data saved successfully'})
+        
+        # Make a POST request to the save_weather API
+        api_url = f'{API_BASE_URL}skynexusdata/save-weather/'  # Replace with your actual API URL
+        response = requests.post(api_url, data=weather_data)
+        
+        if response.status_code == 201:
+            # If API call is successful, render success message
+            return render(request, 'index.html', {'message': 'Weather data saved successfully'})
+        else:
+            # If the API call fails, render an error message
+            return render(request, 'index.html', {'error': 'Failed to save weather data'})
     else:
-        return render(request, 'index.html', {'error': 'No latitiude and longitude provided'})
-    
-
-# Fetch Weather Information from the database
-def fetch_skydata(request):
-    """ Fetch Weather Information from the database"""
-    #weather_data = get_object_or_404(SkynexusData, pk=1)
-    weather_data = SkynexusData.objects.all().order_by('-created_at')
-    return render(request, 'weather-data.html', {'weather_data': weather_data})
-   
-
-# Details of Weather Information
-def weather_details(request, skydata_id):
-    """ Details of Weather Information"""
-    weather_data = get_object_or_404(SkynexusData, pk=skydata_id)
-    return render(request, 'weather-details.html', {'weather_data': weather_data})
+        return render(request, 'index.html', {'error': 'No data provided'})

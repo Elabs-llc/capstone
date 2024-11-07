@@ -22,7 +22,7 @@
                 <a href="{% url 'skydata:weather-details' data.id %}">Read more</a>
             </div>
         {% empty %}
-            <p>No weather data available.</p>
+            <p class="alert">No weather data available.</p>
         {% endfor %}
     </div>
 

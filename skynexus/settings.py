@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+API_BASE_URL = "http://127.0.0.1:8000/api/"
+
 ROOT_URLCONF = 'skynexus.urls'
 
 TEMPLATES = [

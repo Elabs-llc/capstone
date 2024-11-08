@@ -16,18 +16,85 @@
             <p class="alert">{{ weather.error }}</p>
         {% else %}
             <div class="weather-item">
-                <h2>{{ weather_data.city }}, {{ weather_data.country }}</h2>
-                <p><strong>Temperature:</strong> {{ weather_data.temperature }}°C</p>
-                <p><strong>Feels Like:</strong> {{ weather_data.feels_like }}°C</p>
-                <p><strong>Description:</strong> {{ weather_data.weather_description }}</p>
-                <p><strong>Wind Speed:</strong> {{ weather_data.wind_speed }} m/s</p>
-                <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
-                <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
-
+                <h2>
+                    {% if weather_data.city %}{{ weather_data.city }}{% else %}N/A{% endif %},
+                    {% if weather_data.country %}{{ weather_data.country }}{% else %}N/A{% endif %}
+                </h2>
+                <p><strong>Temperature:</strong>
+                    {% if weather_data.temperature %}{{ weather_data.temperature }}°C{% else %}N/A{% endif %}
+                </p>
+                <p><strong>Feels Like:</strong>
+                    {% if weather_data.feels_like %}{{ weather_data.feels_like }}°C{% else %}N/A{% endif %}
+                </p>
+                <p><strong>Description:</strong>
+                    {% if weather_data.weather_description %}{{ weather_data.weather_description }}{% else %}N/A{% endif %}
+                </p>
+                <p><strong>Wind Speed:</strong>
+                    {% if weather_data.wind_speed %}{{ weather_data.wind_speed }} m/s{% else %}N/A{% endif %}
+                </p>
+                <p><strong>Humidity:</strong>
+                    {% if weather_data.humidity %}{{ weather_data.humidity }}%{% else %}N/A{% endif %}
+                </p>
+                <p><strong>Recorded At:</strong>
+                    {% if weather_data.created_at %}{{ weather_data.created_at }}{% else %}N/A{% endif %}
+                </p>
+            
                 <a href="{% url 'skydata:fetch-skydata' %}">Weather Records</a>
                 <a href="{% url 'skydata:home' %}">Back to Home</a>
             </div>
+            
         {% endif %}
     </div>
 </body>
 </html>
+<!-- 
+<div class="weather-item">
+    {% if weather_data.weather_description %}
+        <p><strong>Description:</strong> {{ weather_data.weather_description }}</p>
+    {% endif %}
+    {% if weather_data.wind_speed %}
+        <p><strong>Wind Speed:</strong> {{ weather_data.wind_speed }} m/s</p>
+    {% endif %}
+    {% if weather_data.humidity %}
+        <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
+    {% endif %}
+    {% if weather_data.created_at %}
+        <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
+    {% endif %}
+</div>
+
+<div class="weather-item">
+    <h2>
+        {% if weather_data.city %}{{ weather_data.city }}{% else %}N/A{% endif %},
+        {% if weather_data.country %}{{ weather_data.country }}{% else %}N/A{% endif %}
+    </h2>
+    <p><strong>Temperature:</strong>
+        {% if weather_data.temperature %}{{ weather_data.temperature }}°C{% else %}N/A{% endif %}
+    </p>
+    <p><strong>Feels Like:</strong>
+        {% if weather_data.feels_like %}{{ weather_data.feels_like }}°C{% else %}N/A{% endif %}
+    </p>
+    <p><strong>Description:</strong>
+        {% if weather_data.weather_description %}{{ weather_data.weather_description }}{% else %}N/A{% endif %}
+    </p>
+    <p><strong>Wind Speed:</strong>
+        {% if weather_data.wind_speed %}{{ weather_data.wind_speed }} m/s{% else %}N/A{% endif %}
+    </p>
+    <p><strong>Humidity:</strong>
+        {% if weather_data.humidity %}{{ weather_data.humidity }}%{% else %}N/A{% endif %}
+    </p>
+    <p><strong>Recorded At:</strong>
+        {% if weather_data.created_at %}{{ weather_data.created_at }}{% else %}N/A{% endif %}
+    </p>
+
+    <a href="{% url 'skydata:fetch-skydata' %}">Weather Records</a>
+    <a href="{% url 'skydata:home' %}">Back to Home</a>
+</div>
+
+
+
+
+
+
+
+-->

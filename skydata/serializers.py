@@ -12,7 +12,5 @@ from .models import SkynexusData
 class SkynexusDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = SkynexusData
-        fields = '__all__'
-        #['id', 'city', 'country', 'temperature', 'feels_like', 
-                 #'weather_description', 'wind_speed', 'humidity', 'created_at']
+        fields = ['id', 'city', 'country', 'temperature', 'feels_like','weather_description', 'wind_speed', 'humidity', 'created_at']
         #read_only_fields = ('id', 'created_at')

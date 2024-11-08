@@ -49,7 +49,7 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
     
 
     # Action to get weather details for a specific entry
-    @action(detail=True, methods=['get'], url_path='weather-details')
+    @action(detail=True, methods=['get'], url_path='weather')
     def weather_details(self, request, pk=None):
         """Fetch weather details for a specific entry."""
         try:
@@ -99,20 +99,18 @@ def fetch_skydata(request):
 
     return render(request, 'weather-data.html', {'weather_data': weather_data})
 
-def weather_details(request, skydata_id):
+def weather_info(request, skydata_id):
     """ Fetch details of a specific weather entry and render in the template. """
     try:
-        full_url = f"{API_BASE_URL}weather-details/{skydata_id}/"
-        print(f"Fetching weather data from URL: {full_url}")
-        response = requests.get(f"{API_BASE_URL}weather-details/{skydata_id}/")
+        response = requests.get(f"{API_BASE_URL}{skydata_id}/weather/")
         response.raise_for_status()
-        weather = response.json()
+        weather_data = response.json()
+        print(weather_data)
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
-        weather = {"error": f"Unable to fetch weather data for the given ID. Error:[{e}]"}
+        weather_data = {"error": f"Unable to fetch weather data for the given ID. Error:[{e}]"}
 
-    return render(request, 'weather-details.html', {'weather': weather})
-
+    return render(request, 'weather-details.html', {'weather': weather_data})
 
 def home(request):
     if request.method == 'POST':

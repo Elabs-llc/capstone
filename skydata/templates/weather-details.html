@@ -12,19 +12,22 @@
 <body>
     <div class="container">
         <h1>Weather Details</h1>
+        {% if weather.error %}
+            <p class="alert">{{ weather.error }}</p>
+        {% else %}
+            <div class="weather-item">
+                <h2>{{ weather_data.city }}, {{ weather_data.country }}</h2>
+                <p><strong>Temperature:</strong> {{ weather_data.temperature }}°C</p>
+                <p><strong>Feels Like:</strong> {{ weather_data.feels_like }}°C</p>
+                <p><strong>Description:</strong> {{ weather_data.weather_description }}</p>
+                <p><strong>Wind Speed:</strong> {{ weather_data.wind_speed }} m/s</p>
+                <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
+                <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
 
-        <div class="weather-item">
-            <h2>{{ weather_data.city }}, {{ weather_data.country }}</h2>
-            <p><strong>Temperature:</strong> {{ weather_data.temperature }}°C</p>
-            <p><strong>Feels Like:</strong> {{ weather_data.feels_like }}°C</p>
-            <p><strong>Description:</strong> {{ weather_data.weather_description }}</p>
-            <p><strong>Wind Speed:</strong> {{ weather_data.wind_speed }} m/s</p>
-            <p><strong>Humidity:</strong> {{ weather_data.humidity }}%</p>
-            <p><strong>Recorded At:</strong> {{ weather_data.created_at }}</p>
-
-            <a href="{% url 'skydata:fetch-skydata' %}">Weather Records</a>
-            <a href="{% url 'skydata:home' %}">Back to Home</a>
-        </div>
+                <a href="{% url 'skydata:fetch-skydata' %}">Weather Records</a>
+                <a href="{% url 'skydata:home' %}">Back to Home</a>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
@@ -5,6 +7,10 @@ from skydata.weather_service import fetch_weather_data, get_lat_lon
 from .models import SkynexusData
 from .serializers import SkynexusDataSerializer
 from rest_framework.decorators import action
+
+from django.conf import settings
+from django.shortcuts import redirect, render
+import requests
 
 # ViewSets combine the logic for a set of related views
 # ModelViewSet provides CRUD operations automatically:
@@ -56,12 +62,15 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
 
     # Action to fetches real-time weather data for a given city
     @action(detail=False, methods=['get'], url_path='search')
-    def fetch_current_weather(self, request, city):
+    def fetch_current_weather(self, request):
         """Fetches real-time weather data for a given city."""
         try:
+            city = request.query_params.get('city')
             coordinates = get_lat_lon(city)
+            print(coordinates)
+            lat, lon = coordinates
             if coordinates:
-                weather_data = fetch_weather_data(coordinates)
+                weather_data = fetch_weather_data(lat=lat, lon=lon)
                 return  Response(weather_data, status=status.HTTP_200_OK)
             
             #  If city is not found, return a 404 error
@@ -73,17 +82,15 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
 
 
 
-# views.py
-from django.conf import settings
-from django.shortcuts import redirect, render
-import requests
+# views.py 
+# This views are for testing the API's above
 
-API_BASE_URL = settings.API_BASE_URL
+API_BASE_URL = 'http://127.0.0.1:8000/skydata/api/skynexusdata/'
 
 def fetch_skydata(request):
     """ Fetch weather data from the API and render it in the template. """
     try:
-        response = requests.get(f"{API_BASE_URL}skynexusdata/")
+        response = requests.get(f"{API_BASE_URL}fetch-weather/")
         response.raise_for_status()  # Check for HTTP errors
         weather_data = response.json()  # Parse the JSON data from API response
     except requests.RequestException as e:
@@ -95,12 +102,14 @@ def fetch_skydata(request):
 def weather_details(request, skydata_id):
     """ Fetch details of a specific weather entry and render in the template. """
     try:
-        response = requests.get(f"{API_BASE_URL}skynexusdata/{skydata_id}/")
+        full_url = f"{API_BASE_URL}weather-details/{skydata_id}/"
+        print(f"Fetching weather data from URL: {full_url}")
+        response = requests.get(f"{API_BASE_URL}weather-details/{skydata_id}/")
         response.raise_for_status()
         weather = response.json()
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
-        weather = {}
+        weather = {"error": f"Unable to fetch weather data for the given ID. Error:[{e}]"}
 
     return render(request, 'weather-details.html', {'weather': weather})
 
@@ -109,30 +118,39 @@ def home(request):
     if request.method == 'POST':
         city_name = request.POST.get('city')
         if city_name:
-            # Make an API call to fetch weather data for the city
-            response = requests.get(f"{settings.API_BASE_URL}/search/?city={city_name}")
+            try:
+                # Make an API call to fetch weather data for the city
+                response = requests.get(f"{API_BASE_URL}search/?city={city_name}")
+                response.raise_for_status()  # Raise an exception for HTTP errors
 
-            if response.status_code == status.HTTP_200_OK:
-                # Extract weather data from the response
-                weather_info = response.json()
+                if response.status_code == status.HTTP_200_OK:
+                    # Extract weather data from the response
+                    weather_info = response.json()
 
-                # Check if weather data exists
-                if weather_info:
-                    # Redirect to sky-view and pass the entire weather data
-                    return redirect('skydata:sky-view', weather_info=weather_info)
+                    # Check if weather data exists
+                    if weather_info:
+                        # Redirect to sky-view and pass the entire weather data
+                        #return redirect('skydata:sky-view', weather_info=weather_info)
+                        print(weather_info)
+                        # Store weather_info in session to retrieve in sky_view
+                        request.session['weather_info'] = weather_info
+                        return HttpResponseRedirect(reverse('skydata:sky-view'))
+                    else:
+                        return render(request, 'home.html', {'error': 'Weather data not found.'})
+
+                elif response.status_code == status.HTTP_404_NOT_FOUND:
+                    return render(request, 'home.html', {'error': f'City [{city_name}] not found'})
                 else:
-                    return render(request, 'home.html', {'error': 'Weather data not found.'})
+                    return render(request, 'home.html', {'error': 'Error fetching weather data'})
 
-            elif response.status_code == status.HTTP_404_NOT_FOUND:
-                return render(request, 'home.html', {'error': 'City not found'})
-            else:
-                return render(request, 'home.html', {'error': 'Error fetching weather data'})
+            except requests.RequestException as e:
+                return render(request, 'home.html', {'error': f'Error fetching weather data: {e}'})
     
     return render(request, 'home.html')
 
-def sky_view(request, weather_info):
+def sky_view(request):
+    weather_info = request.session.pop('weather_info', None)  # Retrieve and remove from session
     if weather_info:
-            
         return render(request, 'index.html', {'weather_info': weather_info})
     else:
         return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
@@ -152,7 +170,7 @@ def save_skydata(request):
         }
         
         # Make a POST request to the save_weather API
-        api_url = f'{API_BASE_URL}skynexusdata/save-weather/'  # Replace with your actual API URL
+        api_url = f'{API_BASE_URL}save-weather/' 
         response = requests.post(api_url, data=weather_data)
         
         if response.status_code == 201:

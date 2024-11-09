@@ -1,88 +1,11 @@
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-
-from skydata.weather_service import fetch_weather_data, get_lat_lon
-from .models import SkynexusData
-from .serializers import SkynexusDataSerializer
-from rest_framework.decorators import action
-
-from django.conf import settings
-from django.shortcuts import redirect, render
 import requests
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from rest_framework import status
 
-# ViewSets combine the logic for a set of related views
-# ModelViewSet provides CRUD operations automatically:
-# LIST (GET /api/weather/)
-# CREATE (POST /api/weather/)
-# RETRIEVE (GET /api/weather/{id}/)
-# UPDATE (PUT /api/weather/{id}/)
-# DELETE (DELETE /api/weather/{id}/)
-# queryset defines which records are available through the API
-# serializer_class specifies which serializer to use
-class SkynexusDataViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows weather data to be viewed or edited.
-    """
-    queryset = SkynexusData.objects.all().order_by('-created_at')
-    serializer_class = SkynexusDataSerializer
-
-    # Action to save weather data via  POST request
-    @action(detail=False,methods=['post'], url_path='save-weather')
-    def save_weather(self,  request):
-        """Handles custom POST requests to save weather data."""
-        serializer = self.get_serializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Weather data saved successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-    # Action to retrieve weather data from the database via GET request
-    @action(detail=False, methods=['get'], url_path='fetch-weather')
-    def fetch_weather(self,  request):
-        """Fetch all weather records, ordered by latest created."""
-        weather_data = SkynexusData.objects.all().order_by('-created_at')
-        serializer = self.get_serializer(weather_data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-    # Action to get weather details for a specific entry
-    @action(detail=True, methods=['get'], url_path='weather')
-    def weather_details(self, request, pk=None):
-        """Fetch weather details for a specific entry."""
-        try:
-            weather_data = SkynexusData.objects.get(id=pk)
-            serializer = self.get_serializer(weather_data)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except SkynexusData.DoesNotExist:
-            return Response({"error": "Weather data not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-
-    # Action to fetches real-time weather data for a given city
-    @action(detail=False, methods=['get'], url_path='search')
-    def fetch_current_weather(self, request):
-        """Fetches real-time weather data for a given city."""
-        try:
-            city = request.query_params.get('city')
-            coordinates = get_lat_lon(city)
-            print(coordinates)
-            lat, lon = coordinates
-            if coordinates:
-                weather_data = fetch_weather_data(lat=lat, lon=lon)
-                return  Response(weather_data, status=status.HTTP_200_OK)
-            
-            #  If city is not found, return a 404 error
-            return  Response({"error": "City not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            #  If any error occurs during fetching weather data, return a 500 error
-            return  Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-# views.py 
 # This views are for testing the API's above
 
 API_BASE_URL = 'http://127.0.0.1:8000/skydata/api/skynexusdata/'

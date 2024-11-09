@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import SkynexusDataViewSet
+# from .views import SkynexusDataViewSet
+from .api import SkynexusDataViewSet
 
 # Set up the DefaultRouter for the API endpoints
 router = DefaultRouter()

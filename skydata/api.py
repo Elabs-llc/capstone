@@ -21,7 +21,7 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
     Provides standard CRUD operations and additional custom actions 
     for fetching and saving weather data. Utilizes the SkynexusData 
     model with a serializer for data representation.
-    """
+    """   
     queryset = SkynexusData.objects.all().order_by('-created_at')
     serializer_class = SkynexusDataSerializer
 

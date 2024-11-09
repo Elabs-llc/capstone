@@ -149,9 +149,9 @@ def home(request):
 def sky_view(request):
     weather_info = request.session.pop('weather_info', None)  # Retrieve and remove from session
     if weather_info:
-        return render(request, 'index.html', {'weather_info': weather_info})
+        return render(request, 'results.html', {'weather_info': weather_info})
     else:
-        return render(request, 'index.html', {'error': 'Unable to retrieve weather data'})
+        return render(request, 'results.html', {'error': 'Unable to retrieve weather data'})
 
 
 def save_skydata(request):
@@ -173,9 +173,9 @@ def save_skydata(request):
         
         if response.status_code == 201:
             # If API call is successful, render success message
-            return render(request, 'index.html', {'message': 'Weather data saved successfully'})
+            return render(request, 'results.html', {'message': 'Weather data saved successfully'})
         else:
             # If the API call fails, render an error message
-            return render(request, 'index.html', {'error': 'Failed to save weather data'})
+            return render(request, 'results.html', {'error': 'Failed to save weather data'})
     else:
-        return render(request, 'index.html', {'error': 'No data provided'})
+        return render(request, 'results.html', {'error': 'No data provided'})

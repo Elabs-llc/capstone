@@ -22,7 +22,7 @@ body {
 .container {
     width: 100%;
     max-width: 800px;
-    background: rgba(255, 255, 255, 0.95);
+    background: #0f172924;
     backdrop-filter: blur(10px);
     padding: 2.5rem;
     border-radius: 20px;
@@ -32,12 +32,12 @@ body {
 
 /* Header Styling */
 h1 {
-    color: #2c3e50;
+    color: #000506;
     text-align: center;
     font-size: 2.2rem;
     margin-bottom: 2rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #00b4db, #0083b0);
+    background: linear-gradient(45deg, #000a0c, #0083b0);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: fadeIn 0.8s ease-out;
@@ -163,6 +163,9 @@ img {
     border-radius: 8px;
     margin-top: 1rem;
     animation: shake 0.5s ease-out;
+}
+.text-center {
+    text-align: center;
 }
 
 /* Animations */

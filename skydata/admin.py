@@ -27,7 +27,7 @@ class SkynexusDataAdmin(admin.ModelAdmin):
     list_display = ('city', 'country', 'temperature', 'feels_like', 'humidity', 'weather_description', 'wind_speed', 'created_at')
 
     # The list_filter option adds a filter sidebar to the change list page:
-    list_filter = ['created_at']
+    list_filter = ['created_at', 'city', 'country']
 
     # The search_fields option adds a search box at the top of the change list page:
     search_fields = ['city', 'country']

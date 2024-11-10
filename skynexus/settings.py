@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,13 +38,14 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1','solid-pancake-pjrg75xj96jj3rggj-8000.
 # Application definition
 
 INSTALLED_APPS = [
-    'skydata.apps.SkydataConfig',
+    #'skydata.apps.SkydataConfig',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'django.contrib.contenttypes', 
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'skydata',
     'debug_toolbar',
     'rest_framework',
 ]

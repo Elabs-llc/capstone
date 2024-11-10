@@ -25,6 +25,35 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
     queryset = SkynexusData.objects.all().order_by('-created_at')
     serializer_class = SkynexusDataSerializer
 
+    
+    @action(detail=False, methods=['get'], url_path='search')
+    def fetch_current_weather(self, request):
+        """
+        Custom action to fetch real-time weather data for a specific city.
+        Takes a city name as a query parameter, retrieves its latitude and 
+        longitude, and uses these coordinates to obtain live weather data 
+        from an external source.
+
+        Args:
+            request: HTTP GET request with 'city' query parameter.
+
+        Returns:
+            HTTP 200 response with current weather data if found,
+            HTTP 404 response if the city is not recognized,
+            HTTP 500 response if an internal error occurs.
+        """
+        try:
+            city = request.query_params.get('city')
+            coordinates = get_lat_lon(city)
+            lat, lon = coordinates
+            if coordinates:
+                weather_data = fetch_weather_data(lat=lat, lon=lon)
+                return Response(weather_data, status=status.HTTP_200_OK)
+            return Response({"error": "City not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
     @action(detail=False, methods=['post'], url_path='save-weather')
     def save_weather(self, request):
         """
@@ -43,7 +72,8 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Weather data saved successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Weather data saved successfully"}, status=status.HTTP_201_CREATED) # indicates that a request has been successfully processed, resulting in the creation of a new resource.
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'], url_path='fetch-weather')
@@ -83,30 +113,3 @@ class SkynexusDataViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except SkynexusData.DoesNotExist:
             return Response({"error": "Weather data not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    @action(detail=False, methods=['get'], url_path='search')
-    def fetch_current_weather(self, request):
-        """
-        Custom action to fetch real-time weather data for a specific city.
-        Takes a city name as a query parameter, retrieves its latitude and 
-        longitude, and uses these coordinates to obtain live weather data 
-        from an external source.
-
-        Args:
-            request: HTTP GET request with 'city' query parameter.
-
-        Returns:
-            HTTP 200 response with current weather data if found,
-            HTTP 404 response if the city is not recognized,
-            HTTP 500 response if an internal error occurs.
-        """
-        try:
-            city = request.query_params.get('city')
-            coordinates = get_lat_lon(city)
-            lat, lon = coordinates
-            if coordinates:
-                weather_data = fetch_weather_data(lat=lat, lon=lon)
-                return Response(weather_data, status=status.HTTP_200_OK)
-            return Response({"error": "City not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

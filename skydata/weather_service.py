@@ -2,14 +2,26 @@ import requests
 from django.http import Http404
 
 def get_lat_lon(city_name):
-    """Fetch latitude and longitude from a city name using the OpenCage API."""
-    geocode_api_key = "d92a7df738bc434582c7f7fd2b96f868"  # Replace with your geocoding API key
+    """
+    Fetches the latitude and longitude for a given city name using the OpenCage Geocoding API.
+    
+    Args:
+        city_name (str): The name of the city to geocode.
+
+    Returns:
+        tuple: A tuple containing the latitude and longitude (lat, lon).
+
+    Raises:
+        Http404: If the request fails or no results are found for the city.
+    """
+    geocode_api_key = "d92a7df738bc434582c7f7fd2b96f868"  
+
     try:
         geocode_response = requests.get(f"https://api.opencagedata.com/geocode/v1/json?q={city_name}&key={geocode_api_key}")
         
-        geocode_response.raise_for_status()
+        geocode_response.raise_for_status() # Raise an exception for HTTP errors
         
-        data = geocode_response.json()
+        data = geocode_response.json() # Parse the JSON response data from the API call to a dictionary object  
         
         if data['results']:
             lat = data['results'][0]['geometry']['lat']
@@ -26,7 +38,20 @@ def get_lat_lon(city_name):
         raise Http404("Data Error: Unable to retrieve latitude and longitude.")
 
 def fetch_weather_data(lat, lon):
-    """Fetch weather data from OpenWeatherMap using latitude and longitude."""
+    """
+    Fetches current weather data for a specific latitude and longitude using the OpenWeatherMap API.
+    
+    Args:
+        lat (float): Latitude of the location.
+        lon (float): Longitude of the location.
+
+    Returns:
+        dict: A dictionary containing weather information, including city name, country code, temperature,
+              feels-like temperature, weather description, icon, wind speed, and humidity.
+
+    Raises:
+        Http404: If the request fails or the weather data cannot be retrieved.
+    """
     api_key = "7e2a82a043dd7fa93fe729456e6dbe56"  
     try:
         response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}")

@@ -32,6 +32,11 @@ class SkynexusData(models.Model):
     # Automatically sets the current time when a new record is created
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # It’s important to add __str__() methods to your models, 
+    # not only for your own convenience when dealing with the
+    #  interactive prompt, but also because objects’ 
+    # representations are used throughout Django’s 
+    # automatically-generated admin.
     def __str__(self):
         """
         String representation of the SkynexusData instance, formatted as:

@@ -12,7 +12,7 @@ urlpatterns = [
 
     # URL for viewing detailed weather information for a specific entry.
     # The 'skydata_id' is passed as an integer parameter to identify the specific weather data.
-    path('weather/details/<int:skydata_id>/', views.weather_info, name='weather-details'),
+    path('weather/<int:skydata_id>/info/', views.weather_info, name='weather-details'),
 
     # URL for rendering the weather information view based on session data.
     path('weather/view/', views.sky_view, name='sky-view'),

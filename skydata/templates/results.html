@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Information</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Weather Information{% endblock %}
+
+{% block content %}
     <div class="container text-center">
         <h1>Weather Information</h1>
 
@@ -51,7 +46,4 @@
     </div>
 
     
-    
-
-</body>
-</html>
+    {% endblock %}

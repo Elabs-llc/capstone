@@ -32,6 +32,6 @@ class SkynexusDataSerializer(serializers.ModelSerializer):
         model = SkynexusData
         fields = [
             'id', 'city', 'country', 'temperature', 'feels_like', 
-            'weather_description', 'wind_speed', 'humidity', 'created_at'
+            'weather_description', 'wind_speed', 'humidity', 'created_at',
         ]
         # read_only_fields = ('id', 'created_at')

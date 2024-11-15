@@ -32,15 +32,15 @@ To use SkyNexus, you’ll need the following:
 
 2.  Install the necessary dependencies:
 
-   `pip install -r requirements.txt`
+      `pip install -r requirements.txt`
 
 3. Set up the Django environment and migrate the database:
 
-   `python manage.py migrate`
+      `python manage.py migrate`
    
 5. Run the development server to test the API locally:
 
-   `python manage.py runserver`
+      `python manage.py runserver`
 
 ### Project Structure
 
@@ -50,7 +50,7 @@ skynexus/
 │   ├── settings.py        # Project configuration, including API keys and other settings
 │   ├── urls.py            # Main URL routing
 │   ├── ...
-├── weather/
+├── skydata/
 │   ├── templates/         # Contains template files for weather views
 │   ├── __init__.py        # Package initializer
 │   ├── admin.py           # Weather app admin configuration

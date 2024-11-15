@@ -45,7 +45,35 @@ To use SkyNexus, you’ll need the following:
 
     ```bash
    python manage.py runserver
-   
+
+## Project Structure
+
+``` bash
+skynexus/
+├── skynexus/
+│   ├── settings.py        # Project configuration, including API keys and other settings
+│   ├── urls.py            # Main URL routing
+│   ├── ...
+├── static/
+│   ├── css/
+│   │   └── style.css      # Styling for the weather app
+├── skydata/
+│   ├── templates/         # Contains template files for weather views
+│   ├── __init__.py        # Package initializer
+│   ├── admin.py           # Weather app admin configuration
+│   ├── api.py             # Core API logic and integrations for weather data
+│   ├── api_urls.py        # URL routing for API endpoints
+│   ├── apps.py            # App configuration
+│   ├── cities.txt         # Data file with city information for geolocation
+│   ├── models.py          # Models for caching and storing weather data
+│   ├── serializers.py     # Serializes data into JSON format
+│   ├── tests.py           # Unit tests for weather app functionality
+│   ├── urls.py            # URL routing for weather and geolocation endpoints
+│   ├── views.py           # Handles API requests for weather and location data
+│   └── weather_<other_files> # Additional weather-related files
+├── requirements.txt       # Project dependencies
+└── README.md              # Project documentation
+```
 
 ## Usage
 
@@ -90,33 +118,22 @@ To fetch real-time weather data:
 curl -X GET "http://localhost:8000/weather/fetch/" -H "Authorization: Bearer <YOUR_TOKEN>"
 ```
 
+To save new weather data via POST request:
+```bash
+curl -X POST "http://localhost:8000/weather/save/" -d '{"data": "<DATA_JSON>"}' -H "Authorization: Bearer <YOUR_TOKEN>"
+```
 
-## Project Structure
 
-``` bash
-skynexus/
-├── skynexus/
-│   ├── settings.py        # Project configuration, including API keys and other settings
-│   ├── urls.py            # Main URL routing
-│   ├── ...
-├── static/
-│   ├── css/
-│   │   └── style.css      # Styling for the weather app
-├── skydata/
-│   ├── templates/         # Contains template files for weather views
-│   ├── __init__.py        # Package initializer
-│   ├── admin.py           # Weather app admin configuration
-│   ├── api.py             # Core API logic and integrations for weather data
-│   ├── api_urls.py        # URL routing for API endpoints
-│   ├── apps.py            # App configuration
-│   ├── cities.txt         # Data file with city information for geolocation
-│   ├── models.py          # Models for caching and storing weather data
-│   ├── serializers.py     # Serializes data into JSON format
-│   ├── tests.py           # Unit tests for weather app functionality
-│   ├── urls.py            # URL routing for weather and geolocation endpoints
-│   ├── views.py           # Handles API requests for weather and location data
-│   └── weather_<other_files> # Additional weather-related files
-├── requirements.txt       # Project dependencies
-└── README.md              # Project documentation
+## Contributing
 
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Submit a pull request with detailed information about your changes.
+
+
+## License
+
+SkyNexus is licensed under the MIT License. See the `LICENSE` file for details.
 

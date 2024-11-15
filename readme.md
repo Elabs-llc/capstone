@@ -50,6 +50,9 @@ skynexus/
 │   ├── settings.py        # Project configuration, including API keys and other settings
 │   ├── urls.py            # Main URL routing
 │   ├── ...
+├── static/
+│   ├── css/
+│   │   └── style.css      # Styling for the weather app
 ├── skydata/
 │   ├── templates/         # Contains template files for weather views
 │   ├── __init__.py        # Package initializer
@@ -66,4 +69,5 @@ skynexus/
 │   └── weather_<other_files> # Additional weather-related files
 ├── requirements.txt       # Project dependencies
 └── README.md              # Project documentation
+
 

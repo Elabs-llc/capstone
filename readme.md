@@ -32,17 +32,66 @@ To use SkyNexus, you’ll need the following:
 
 2.  Install the necessary dependencies:
 
-      `pip install -r requirements.txt`
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 3. Set up the Django environment and migrate the database:
 
-      `python manage.py migrate`
+   ```bash
+   python manage.py migrate
    
 5. Run the development server to test the API locally:
 
-      `python manage.py runserver`
+    ```bash
+   python manage.py runserver
+   
 
-### Project Structure
+## Usage
+
+To interact with the API, use the endpoints listed below. Note that some endpoints may require an authentication token.
+
+### Example Endpoints
+
+- **Home Page**: Displays the main form and weather data.
+  - **URL**: `/`
+  - **Method**: `GET`
+  - **Purpose**: Loads the homepage where users can view and interact with the main weather form.
+
+- **Weather Details**: View detailed weather information for a specific entry.
+  - **URL**: `/weather/<int:skydata_id>/info/`
+  - **Method**: `GET`
+  - **Parameters**: `skydata_id` (integer) — Unique identifier for the specific weather data entry.
+  - **Purpose**: Displays detailed information for a particular weather data record.
+
+- **Weather Information View**: Render the weather information based on session data.
+  - **URL**: `/weather/view/`
+  - **Method**: `GET`
+  - **Purpose**: Loads weather data from the session for viewing.
+
+- **Save Weather Data**: Save new weather data.
+  - **URL**: `/weather/save/`
+  - **Method**: `POST`
+  - **Purpose**: Saves new weather data to the database, typically through a POST request with form data.
+
+- **Fetch Weather Data**: Retrieve weather data from an external API.
+  - **URL**: `/weather/fetch/`
+  - **Method**: `GET`
+  - **Purpose**: Fetches weather data from an external source and displays it.
+
+- **API Endpoints**: SkyNexus API endpoints for weather and location services.
+  - **URL Prefix**: `/api/`
+  - **Included Routes**: The `skydata.api_urls` file will contain the full list of API endpoints for real-time, forecast, and historical weather data as well as geolocation.
+
+### Sample Requests
+
+To fetch real-time weather data:
+```bash
+curl -X GET "http://localhost:8000/weather/fetch/" -H "Authorization: Bearer <YOUR_TOKEN>"
+```
+
+
+## Project Structure
 
 ``` bash
 skynexus/

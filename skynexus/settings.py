@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#0=%2596kx@*hn=%mrn3w2zmn5n9f$d6(f=bjw6jx85ku^ltuu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # When running Django in GitHub Codespaces, you are using a remote development environment that 
 # is accessible via a URL like https://solid-pancake-pjrg75xj96jj3rggj-8000.app.github.dev/ 
@@ -33,7 +35,7 @@ DEBUG = True
 # GitHub Codespaces runs applications inside a containerized environment, and it 
 # exposes ports to the public GitHub domain. This can sometimes cause issues with 
 # how URLs are routed or accessed in the application.
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','solid-pancake-pjrg75xj96jj3rggj-8000.app.github.dev']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -87,12 +89,18 @@ WSGI_APPLICATION = 'skynexus.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# handle local development when DATABASE_URL is not available
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -129,10 +137,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # Assuming "static" folder is in the root directory
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 INTERNAL_IPS = [
     # ...
